@@ -7,8 +7,8 @@ provider:
   region: us-east-1
 
 functions:
-  hello:
-    handler: handlers.helloWorldHandler.getReply
+  replyMessage:
+    handler: handlers/messageHandlers.replyMessage
     events:
       - http:
           path: reply
