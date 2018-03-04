@@ -1,0 +1,18 @@
+{
+  "name": "nihao-serverless-api",
+  "version": "0.0.1",
+  "description": "NIHAO API for serverless JS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {},
+  "dependencies": {
+    "amazon-cognito-identity-js": "^2.0.1",
+    "jwt-decode": "^2.2.0",
+    "mysql2": "^1.5.2",
+    "sequelize": "^4.33.4",
+    "uuid": "^3.2.1",
+    "validator": "^9.4.1"
+  }
+}
