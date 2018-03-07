@@ -13,6 +13,7 @@ functions:
       - http:
           path: reply
           method: post
+          integration: lambda
           authorizer:
             arn: arn:aws:cognito-idp:us-east-1:646898565065:userpool/us-east-1_bpYWRgIrp
 
