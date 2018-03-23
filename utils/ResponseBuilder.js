@@ -1,5 +1,20 @@
 const Errors = require('./Errors');
 
+function genBaseResponse(statusCode) {
+    let response = {
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            // 'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+            'Access-Control-Allow-Headers': 'Content-Type,Authorization',
+            'Access-Control-Allow-Methods': 'POST,PUT,DELETE,GET,OPTIONS'
+        }
+    };
+    if (statusCode) {
+        response.statusCode = statusCode;
+    }
+    return response;
+}
+
 module.exports.error = (err) => {
 
     // Error should be APIError
@@ -7,7 +22,7 @@ module.exports.error = (err) => {
         err = new Errors.APIError(500, Errors.CODES.ERR_SYSTEM_ERROR, err.message);
     }
 
-    let res = {statusCode: err.httpStatus};
+    let res = genBaseResponse(err.httpStatus);
 
     // Create body
     let body = {success: false, code: err.code};
@@ -27,7 +42,7 @@ module.exports.error = (err) => {
 
 module.exports.success = (data) => {
 
-    let res = {statusCode: 200};
+    let res = genBaseResponse(200);
 
     // Create body
     let body = {success: true};
