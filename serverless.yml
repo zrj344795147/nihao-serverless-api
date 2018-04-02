@@ -25,3 +25,12 @@ functions:
           authorizer:
             arn: arn:aws:cognito-idp:us-east-1:646898565065:userpool/us-east-1_bpYWRgIrp
 
+  lexFulfilled:
+      handler: handlers/messageHandlers.lexFulfilledHookHandler
+
+  checkMessageQueue:
+    handler: handlers/messageHandlers.checkMessageQueue
+    events:
+      - schedule: rate(1 minute)
+
+

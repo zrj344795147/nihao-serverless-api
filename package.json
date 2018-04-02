@@ -8,11 +8,13 @@
   },
   "devDependencies": {},
   "dependencies": {
-    "amazon-cognito-identity-js": "^2.0.1",
+    "amazon-cognito-identity-js": "^2.0.2",
+    "aws-sdk": "^2.217.1",
     "jwt-decode": "^2.2.0",
-    "mysql2": "^1.5.2",
-    "sequelize": "^4.33.4",
+    "mysql2": "^1.5.3",
+    "sequelize": "^4.37.5",
     "uuid": "^3.2.1",
-    "validator": "^9.4.1"
+    "validator": "^9.4.1",
+    "yelp-fusion": "^2.0.3"
   }
 }
