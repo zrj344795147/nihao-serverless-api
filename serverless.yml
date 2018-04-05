@@ -26,7 +26,10 @@ functions:
             arn: arn:aws:cognito-idp:us-east-1:646898565065:userpool/us-east-1_bpYWRgIrp
 
   lexFulfilled:
-      handler: handlers/lexHandlers.lexFulfilledHookHandler
+    handler: handlers/lexHandlers.lexFulfilledHookHandler
+
+  lexValidateHookHandler:
+    handler: handlers/lexHandlers.lexValidateHookHandler
 
   checkMessageQueue:
     handler: handlers/lexHandlers.checkMessageQueue

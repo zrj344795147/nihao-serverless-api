@@ -5,6 +5,63 @@ const yelp = require('yelp-fusion');
 const yelpApiKey = 'RS5xFR5EjvEsNEhAyN5sxFG0FnzmFdsJ6TyZoV6tXUpRI-FEJXxRouwTq54K_0a-DJCxag8L7wpjahFxz-GR1iSxYMfpv6oM3cVZoz9J-upyiP8ztxQ26g3B8n69WnYx';
 // AWS.config.update({region: 'us-east-1'});
 
+module.exports.lexValidateHookHandler = (event, context, callback) => {
+    console.log(event);
+    if(event.currentIntent.name !== 'RestuarantQuery') {
+        console.log('Error lex response');
+        return;
+    }
+
+    let delegateOutput = {
+        sessionAttributes: event.sessionAttributes,
+        dialogAction: {
+            type: 'Delegate',
+            slots: event.currentIntent.slots,
+        },
+    };
+
+    let elicitOutput = {
+        sessionAttributes: event.sessionAttributes,
+        dialogAction: {
+            type: 'ElicitSlot',
+            message: {
+                contentType: "PlainText",
+                content: "Sorry? What city?"
+            },
+            intentName: event.currentIntent.name,
+            slots: event.currentIntent.slots,
+            slotToElicit : "",
+        },
+    };
+
+    // City
+    if(event.currentIntent.slots.area !== 'null') {
+        if(event.currentIntent.slots.area === 'test') {
+            elicitOutput.dialogAction.slotToElicit = 'area';
+            callback(null, elicitOutput);
+            return;
+        }
+    }
+    // Email
+    if(event.currentIntent.slots.email !== 'null') {
+
+    }
+    // Food
+    if(event.currentIntent.slots.food !== 'null') {
+
+    }
+    // Number Of People
+    if(event.currentIntent.slots.numberOfPeople !== 'null') {
+
+    }
+    // Time
+    if(event.currentIntent.slots.time !== 'null') {
+
+    }
+
+    callback(null, delegateOutput);
+};
+
 
 //
 module.exports.lexFulfilledHookHandler = (event, context, callback) => {
@@ -31,10 +88,10 @@ module.exports.lexFulfilledHookHandler = (event, context, callback) => {
             dialogAction: {
                 type: "Close",
                 fulfillmentState: "Fulfilled",
-                message: {
-                    contentType: "PlainText",
-                    content: "Have a good day."
-                }
+                // message: {
+                //     contentType: "PlainText",
+                //     content: "You're all set. Expect my recommendations shortly! Have a good day."
+                // }
             }
         });
     });
