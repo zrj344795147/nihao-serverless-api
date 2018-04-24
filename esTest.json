@@ -1,0 +1,6 @@
+{ "index" : { "_index": "predictions", "_type" : "prediction", "_id" : "1" } }
+{"score": 0.999, "id": "vbvtWBbO3Q-Q15w7aHxgVg", "categories": "American"}
+{ "index" : { "_index": "predictions", "_type" : "prediction", "_id" : "2" } }
+{"score": 0.999, "id": "HfJhenvKDi-ds8SUJFwrLg", "categories": "Japanese"}
+{ "index" : { "_index": "predictions", "_type" : "prediction", "_id" : "3" } }
+{"score": 0.999,"id": "UXVDyIzmO5kmJnlv-HDXLg","categories": "American"}
