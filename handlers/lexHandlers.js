@@ -1,6 +1,7 @@
 // Packages
 const AWS = require('aws-sdk');
 const yelp = require('yelp-fusion');
+const request = require('request');
 // Configs
 const yelpApiKey = 'RS5xFR5EjvEsNEhAyN5sxFG0FnzmFdsJ6TyZoV6tXUpRI-FEJXxRouwTq54K_0a-DJCxag8L7wpjahFxz-GR1iSxYMfpv6oM3cVZoz9J-upyiP8ztxQ26g3B8n69WnYx';
 // AWS.config.update({region: 'us-east-1'});
@@ -141,11 +142,94 @@ module.exports.checkMessageQueue= (event, context, callback) => {
                 console.log("Message Deleted ", res);
                 // Deal with msg
                 let info = JSON.parse(data.Messages[i].Body);
+                // Custom Search
+                if(info.area.toLowerCase() === 'manhattan'&& (info.food.toLowerCase() === 'chinese' || info.food.toLowerCase() === 'mexican'
+                        || info.food.toLowerCase() === 'japanese' || info.food.toLowerCase() === 'indian' || info.food.toLowerCase() === 'american')) {
+                    let searchUrl = 'https://search-es-restaurants-hvqltrqb43grnxpwbome7o4eci.us-east-1.es.amazonaws.com/predictions/_search?' +
+                        'q=categories:' + info.food + '&sort=score:desc&pretty&size=3';
+
+                    // query es
+                    request(searchUrl, async (err, res, body) => {
+                        if(err) {
+                            console.log(err);
+                            return;
+                        }
+
+                        let parseBody = JSON.parse(body);
+                        console.log(parseBody);
+                        const DB = new AWS.DynamoDB.DocumentClient();
+                        let content = '';
+
+                        let n = 0;
+                        for(let i = 0; i < parseBody.hits.hits.length; i++) {
+                            // query db
+
+                            let restaurantId = parseBody.hits.hits[i]._source.id;
+                            console.log('restaurantId' + restaurantId);
+                            let dbParams = {
+                                TableName: 'yelp-restaurants',
+                                KeyConditionExpression:'#id = :restaurantId',
+                                ExpressionAttributeNames: {
+                                    '#id': 'id',
+                                },
+                                ExpressionAttributeValues: {
+                                    ':restaurantId': restaurantId,
+                                }
+                            };
+                            await DB.query(dbParams, (err, data) => {
+                                if(err) {
+                                    console.log(err);
+                                }
+                                console.log(data);
+                                let business = data.Items[0];
+                                content += business.name + '\n';
+                                content += 'Location: ' + business.address + '\n';
+                                content += 'Phone: ' + business.phone + '\n';
+                                content += '\n';
+                                console.log('content: ' + content);
+                                n += 1;
+                                if(n === 3) {
+                                    //send email
+                                    console.log('msg: ' + content);
+                                    const sesParams = {
+                                        Destination: {
+                                            ToAddresses:[info.email]
+                                        },
+                                        Source: 'rz1189@nyu.edu',
+                                        Message: {
+                                            Body: {
+                                                Text: {
+                                                    Charset: "UTF-8",
+                                                    Data: content
+                                                }
+                                            },
+                                            Subject: {
+                                                Data: 'Restaurant Suggestions'
+                                            },
+                                        },
+                                    };
+                                    ses.sendEmail(sesParams, (err, res) => {
+                                        if(err) {
+                                            console.log(err);
+                                            return;
+                                        }
+                                        console.log('Email sent to ' + info.email + ': ' + content);
+                                    });
+                                }
+                            });
+                        }
+
+
+                    });
+
+                    return;
+                }
+                //
                 // console.log(info.area);
                 let searchRequest = {
-                    term: 'Restaurant',
+                    term: info.food + ' food',
                     location: info.area,
-                    categories: info.food,
+                    // categories: info.food,
                     // open_at: ,
                     limit: 3
                 };
@@ -193,7 +277,7 @@ module.exports.checkMessageQueue= (event, context, callback) => {
                                 console.log(err);
                                 return;
                             }
-                            console.log('Email sent to ');
+                            console.log('Email sent to ' + info.email);
                         });
                     })
                     .catch(err=> {
@@ -222,7 +306,7 @@ module.exports.checkMessageQueue= (event, context, callback) => {
                                 console.log(err);
                                 return;
                             }
-                            console.log('Email sent to ');
+                            console.log('Email sent to ' + info.email);
                         });
                     });
             });

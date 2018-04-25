@@ -102,6 +102,24 @@ function addIndex(src, dst) {
     });
 }
 
+function queryDB() {
+    const restaurants = ['uaFHoq-a5XqxF-bsOK9_Qg', 'MhceeLrM2_3mcKw5EGLY6A', '1Duix1fA6zcJGdYAmBPkmw'];
+    let dbParams = {
+        TableName: 'yelp-restaurants',
+        KeyConditionExpression:'#id = :restaurantId',
+        ExpressionAttributeNames: {
+            '#id': 'id',
+        },
+        ExpressionAttributeValues: {
+            ':restaurantId': 'uaFHoq-a5XqxF-bsOK9_Qg',
+        }
+    };
+    DB.query(dbParams, (err, data) => {
+        console.log(data);
+    });
+
+}
+
 // aws dynamodb scan --table-name yelp-restaurants --output json > result.json
 // node dynamodb-dump.js -t yelp-restaurants -f result.csv
 // aws dynamodb scan --table-name yelp-restaurants --select "COUNT"
@@ -116,4 +134,6 @@ function addIndex(src, dst) {
 // getYelpRestaurants(cuisines[3]);
 // getYelpRestaurants(cuisines[4]);
 
-addIndex('../prediction.json', '../esData.json');
+// addIndex('../prediction.json', '../esData.json');
+
+queryDB();
